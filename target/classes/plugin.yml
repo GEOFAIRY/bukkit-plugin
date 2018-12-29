@@ -1,0 +1,15 @@
+name: TestPlugin
+main: com.gmail.kyrans19.TestPlugin.TestPlugin
+version: 1.0-SNAPSHOT
+author: GEOFAIRY
+commands:
+  basic:
+    description: This is a demo command.
+    usage: /<command> [player]
+    permission: TestPlugin.basic
+    permission-message: You don't have <permission>
+  basic2:
+    description: This is also a demo command.
+    usage: /<command> [player]
+    permission: TestPlugin.basic2
+    permission-message: You don't have <permission>
