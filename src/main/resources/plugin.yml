@@ -3,13 +3,35 @@ main: com.gmail.kyrans19.TestPlugin.TestPlugin
 version: 1.0-SNAPSHOT
 author: GEOFAIRY
 commands:
-  basic:
-    description: This is a demo command.
-    usage: /<command> [player]
-    permission: TestPlugin.basic
-    permission-message: You don't have <permission>
-  basic2:
-    description: This is also a demo command.
-    usage: /<command> [player]
-    permission: TestPlugin.basic2
-    permission-message: You don't have <permission>
+  smite:
+    description: Places lightning on a target player or when the sender is looking.
+    usage: /smite [player]
+    permission: TestPlugin.smite
+    permission-message: You lack the required permissions for this command
+  kill:
+    description: Kills the user or a target player.
+    usage: /kill [player]
+    permission:
+    permission-message: You lack the required permissions for this command
+
+
+permission:
+  TestPlugin.*:
+    description: Gives acces to all TestPlugin commands
+    children:
+      TestPlugin.smite: true
+      TestPlugin.kill.*: true
+  TestPlugin.smite:
+    description: Allows a user to smite
+    default: op
+  TestPlugin.kill:
+    description: Gives access to all TestPlugin.kill commands
+    children:
+      TestPlugin.kill.self: true
+      TestPlugin.kill.other: true
+  TestPlugin.kill.self:
+    description: Allows a user to kill themselves
+    default: true
+  TestPlugin.kill.other:
+      description: Allows a user to kill others
+      default: op

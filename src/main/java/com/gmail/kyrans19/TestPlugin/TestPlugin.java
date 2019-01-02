@@ -11,9 +11,9 @@ public final class TestPlugin extends JavaPlugin {
         /**
          * Method executed on plugin load
          */
-        this.getCommand("basic").setExecutor(new TestPluginCommandExecutor(this));
-        this.getCommand("basic2").setExecutor(new TestPluginCommandExecutor(this));
-        getLogger().info("onEnable has been invoked!");
+        this.getCommand("smite").setExecutor(new TestPluginCommandExecutor(this));
+        this.getCommand("kill").setExecutor(new TestPluginCommandExecutor(this));
+        getLogger().info("Test Plugin version 1.0 has started!");
     }
 
     @Override
