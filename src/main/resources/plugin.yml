@@ -13,6 +13,21 @@ commands:
     usage: /kill [player]
     permission:
     permission-message: You lack the required permissions for this command
+  tpr:
+    description: Requests a teleport to a specified player
+    usage: /tpr [player]
+    permission:
+    permission-message: You lack the required permissions for this command
+  tpaccept:
+    description: Accepts a teleport request
+    usage: /tpaccept
+    permission:
+    permission-message: You lack the required permissions for this command
+  tpdecline:
+    description: Declines a teleport request
+    usage: /tpdecline
+    permission:
+    permission-message: You lack the required permissions for this command
 
 
 permission:
@@ -21,10 +36,11 @@ permission:
     children:
       TestPlugin.smite: true
       TestPlugin.kill.*: true
+      TestPlugin.teleport.*: true
   TestPlugin.smite:
     description: Allows a user to smite
     default: op
-  TestPlugin.kill:
+  TestPlugin.kill.*:
     description: Gives access to all TestPlugin.kill commands
     children:
       TestPlugin.kill.self: true
@@ -33,5 +49,20 @@ permission:
     description: Allows a user to kill themselves
     default: true
   TestPlugin.kill.other:
-      description: Allows a user to kill others
-      default: op
+    description: Allows a user to kill others
+    default: op
+  TestPlugin.teleport.*:
+    description: Gives access to all TestPlugin.teleport commands
+    children:
+      TestPlugin.teleport.request: true
+      TestPlugin.teleport.accept: true
+      TestPlugin.teleport.decline: true
+  TestPlugin.teleport.request:
+    description: Allows a user to request a teleport
+    default: true
+  TestPlugin.teleport.accept:
+    description: Accepts a teleport request
+    default: true
+  TestPlugin.teleport.decline:
+    description: Accepts a teleport request
+    default: true

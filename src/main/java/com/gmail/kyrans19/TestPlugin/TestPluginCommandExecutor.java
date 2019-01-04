@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -15,6 +16,7 @@ import java.util.Set;
  */
 public class TestPluginCommandExecutor implements CommandExecutor {
     private final TestPlugin plugin;
+    private ArrayList<ArrayList> teleportArray = new ArrayList<>();
 
     /**
      * command executor constructor
@@ -38,8 +40,98 @@ public class TestPluginCommandExecutor implements CommandExecutor {
            if (smite(sender, args)) return true;
        } else if (cmd.getName().equalsIgnoreCase("kill")) {
            if (kill(sender, args)) return true;
+       } else if (cmd.getName().equalsIgnoreCase("tpr")) {
+           if (teleportRequest(sender, args)) return true;
+       } else if (cmd.getName().equalsIgnoreCase("tpaccept")) {
+           if (teleportAccept(sender, args)) return true;
+       } else if (cmd.getName().equalsIgnoreCase("tpdecline")) {
+           if (teleportDecline(sender, args)) return true;
        }
        return false;
+    }
+
+    private boolean teleportDecline(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+            for (ArrayList<Player> i:teleportArray){
+                if (i.get(1).getUniqueId() == ((Player) sender).getUniqueId()) {
+                    sender.sendMessage("Teleport Declined");
+                    teleportArray.remove(i);
+                    return true;
+                }
+            }
+            sender.sendMessage("No requests to teleport");
+            return true;
+        } else {
+            sender.sendMessage("Only can be used by a player");
+            return true;
+        }
+    }
+
+    private boolean teleportAccept(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+            for (ArrayList<Player> i:teleportArray){
+                if (i.get(1).getUniqueId() == ((Player) sender).getUniqueId()) {
+                    Player target = sender.getServer().getPlayer(i.get(0).getDisplayName());
+                    // Make sure the player is online.
+                    if (target == null) {
+                        sender.sendMessage(args[0] + " is not currently online.");
+                        teleportArray.remove(i);
+                        return true;
+                    }
+                    target.teleport(((Player) sender).getLocation());
+                    sender.sendMessage("Teleport Accepted");
+                    teleportArray.remove(i);
+                    return true;
+                }
+            }
+            sender.sendMessage("No requests to teleport");
+            return true;
+        } else {
+            sender.sendMessage("Only can be used by a player");
+            return true;
+        }
+    }
+
+    /**
+     * Method to handle teleport requests. A player can request to teleport to another player.
+     * @param sender CommandSender the player who executed the command
+     * @param args String[] the command arguments
+     * @return boolean command success or failure
+     */
+    private boolean teleportRequest(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+            if (args.length == 1) {
+                Player target = sender.getServer().getPlayer(args[0]);
+                // Make sure the player is online.
+                if (target == null) {
+                    sender.sendMessage(args[0] + " is not currently online.");
+                    return true;
+                }
+                Player targetSender = (Player) sender;
+                if (target.getUniqueId() == targetSender.getUniqueId()) {
+                    sender.sendMessage("Cannot request to teleport to yourself.");
+                    return true;
+                }
+                target.sendMessage(targetSender.getDisplayName() + " is requesting to teleport to you!\nType /tpaccept to accept or /tpdecline to decline.");
+
+                for(ArrayList<Player> i: teleportArray) {
+                    if (i.get(1).getUniqueId() == target.getUniqueId()) {
+                        teleportArray.remove(i);
+                    }
+                }
+
+                ArrayList<Player> temp = new ArrayList<Player>();
+                temp.add(targetSender);
+                temp.add(target);
+                teleportArray.add(temp);
+
+                return true;
+            }
+        } else {
+            sender.sendMessage("Must be a player to use this command.");
+            return true;
+        }
+        return false;
     }
 
     /**

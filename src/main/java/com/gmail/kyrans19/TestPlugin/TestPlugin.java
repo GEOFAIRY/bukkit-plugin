@@ -13,6 +13,9 @@ public final class TestPlugin extends JavaPlugin {
          */
         this.getCommand("smite").setExecutor(new TestPluginCommandExecutor(this));
         this.getCommand("kill").setExecutor(new TestPluginCommandExecutor(this));
+        this.getCommand("tpr").setExecutor(new TestPluginCommandExecutor(this));
+        this.getCommand("tpaccept").setExecutor(new TestPluginCommandExecutor(this));
+        this.getCommand("tpdecline").setExecutor(new TestPluginCommandExecutor(this));
         getLogger().info("Test Plugin version 1.0 has started!");
     }
 
