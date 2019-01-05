@@ -18,6 +18,8 @@ public class TestPluginCommandExecutor implements CommandExecutor {
     private final TestPlugin plugin;
     private ArrayList<ArrayList> teleportArray = new ArrayList<>();
 
+    public void clearTpr(){ teleportArray = new ArrayList<>(); }
+
     /**
      * command executor constructor
      * @param plugin TestPlugin the main plugin instance

@@ -6,16 +6,19 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Main plugin class
  */
 public final class TestPlugin extends JavaPlugin {
+    TestPluginCommandExecutor executor;
+
     @Override
     public void onEnable() {
         /**
          * Method executed on plugin load
          */
-        this.getCommand("smite").setExecutor(new TestPluginCommandExecutor(this));
-        this.getCommand("kill").setExecutor(new TestPluginCommandExecutor(this));
-        this.getCommand("tpr").setExecutor(new TestPluginCommandExecutor(this));
-        this.getCommand("tpaccept").setExecutor(new TestPluginCommandExecutor(this));
-        this.getCommand("tpdecline").setExecutor(new TestPluginCommandExecutor(this));
+        executor = new TestPluginCommandExecutor(this);
+        this.getCommand("smite").setExecutor(executor);
+        this.getCommand("kill").setExecutor(executor);
+        this.getCommand("tpr").setExecutor(executor);
+        this.getCommand("tpaccept").setExecutor(executor);
+        this.getCommand("tpdecline").setExecutor(executor);
         getLogger().info("Test Plugin version 1.0 has started!");
     }
 
@@ -24,6 +27,7 @@ public final class TestPlugin extends JavaPlugin {
         /**
          * Method executed on plugin unload
          */
+        executor.clearTpr();
         getLogger().info("onDisable has been invoked!");
     }
 }
