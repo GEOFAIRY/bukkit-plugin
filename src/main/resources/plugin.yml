@@ -11,24 +11,28 @@ commands:
   kill:
     description: Kills the user or a target player.
     usage: /kill [player]
-    permission:
+    permission: TestPlugin.kill.self
     permission-message: You lack the required permissions for this command
   tpr:
     description: Requests a teleport to a specified player
     usage: /tpr [player]
-    permission:
+    permission: TestPlugin.teleport.request
     permission-message: You lack the required permissions for this command
   tpaccept:
     description: Accepts a teleport request
     usage: /tpaccept
-    permission:
+    permission: TestPlugin.teleport.accept
     permission-message: You lack the required permissions for this command
   tpdecline:
     description: Declines a teleport request
     usage: /tpdecline
-    permission:
+    permission: TestPlugin.teleport.decline
     permission-message: You lack the required permissions for this command
-
+  heal:
+    description: Heals a target player by a given ammount or to max
+    usage: /heal [amount] [player]
+    permission: TestPlugin.heal
+    permission-message: You lack the required permissions for this command
 
 permission:
   TestPlugin.*:
@@ -37,6 +41,7 @@ permission:
       TestPlugin.smite: true
       TestPlugin.kill.*: true
       TestPlugin.teleport.*: true
+      TestPlugin.heal: true
   TestPlugin.smite:
     description: Allows a user to smite
     default: op
@@ -65,4 +70,7 @@ permission:
     default: true
   TestPlugin.teleport.decline:
     description: Accepts a teleport request
+    default: true
+  TestPlugin.heal:
+    description: Heals a target player by a given ammount or to max
     default: true
