@@ -20,6 +20,7 @@ public final class TestPlugin extends JavaPlugin {
         this.getCommand("tpaccept").setExecutor(executor);
         this.getCommand("tpdecline").setExecutor(executor);
         this.getCommand("heal").setExecutor(executor);
+        this.getCommand("spawn").setExecutor(executor);
         getLogger().info("Test Plugin version 1.0 has started!");
     }
 

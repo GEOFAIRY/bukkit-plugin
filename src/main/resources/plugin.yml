@@ -33,6 +33,11 @@ commands:
     usage: /heal [amount] [player]
     permission: TestPlugin.heal
     permission-message: You lack the required permissions for this command
+  spawn:
+    description: Move the sender to the spawn
+    usage: /spawn
+    permission: TestPlugin.spawn
+    permission-message: You lack the required permissions for this command
 
 permission:
   TestPlugin.*:
@@ -42,6 +47,7 @@ permission:
       TestPlugin.kill.*: true
       TestPlugin.teleport.*: true
       TestPlugin.heal: true
+      TestPlugin.spawn: true
   TestPlugin.smite:
     description: Allows a user to smite
     default: op
@@ -73,4 +79,7 @@ permission:
     default: true
   TestPlugin.heal:
     description: Heals a target player by a given ammount or to max
+    default: true
+  TestPlugin.spawn:
+    description: Move the sender to the spawn
     default: true

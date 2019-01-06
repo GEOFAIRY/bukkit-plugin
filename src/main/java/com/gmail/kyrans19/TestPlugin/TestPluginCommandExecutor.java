@@ -46,8 +46,27 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             return teleportDecline(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("tpdecline")) {
             return heal(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("spawn")){
+            return spawn(sender, args);
         }
         return false;
+    }
+
+    /**
+     * method to handle spawn teleporting
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
+    private boolean spawn(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+            ((Player) sender).teleport(((Player) sender).getWorld().getSpawnLocation());
+            sender.sendMessage("Moved to spawn");
+            return true;
+        } else {
+            sender.sendMessage("Must be player to move to spawn");
+            return true;
+        }
     }
 
 
