@@ -8,6 +8,7 @@
 package com.gmail.kyrans19.TestPlugin;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -51,7 +52,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             return teleportAccept(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("tpdecline")) {
             return teleportDecline(sender, args);
-        } else if (cmd.getName().equalsIgnoreCase("tpdecline")) {
+        } else if (cmd.getName().equalsIgnoreCase("heal")) {
             return heal(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("spawn")){
             return spawn(sender, args);
@@ -119,10 +120,10 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                     sender.sendMessage("Heal amount must be a number");
                     return true;
                 }
-                Player target = sender.getServer().getPlayer(args[0]);
+                Player target = sender.getServer().getPlayer(args[1]);
                 // Make sure the player is online.
                 if (target == null) {
-                    sender.sendMessage(args[0] + " is not currently online or cannot be found.");
+                    sender.sendMessage(args[1] + " is not currently online or cannot be found.");
                     return true;
                 }
                 if (healAmount > 0 && healAmount <= target.getMaxHealth()) {
@@ -239,12 +240,13 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                 return true;
             } else {
                 sender.sendMessage("Please enter a player to request a teleport to");
-                return false;
             }
         } else {
             sender.sendMessage("Must be a player to use this command.");
             return true;
         }
+        sender.sendMessage("all failed :(");
+        return false;
     }
 
     /**

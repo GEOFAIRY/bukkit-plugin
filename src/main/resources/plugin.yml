@@ -79,7 +79,7 @@ permission:
     default: true
   TestPlugin.heal:
     description: Heals a target player by a given ammount or to max
-    default: true
+    default: op
   TestPlugin.spawn:
     description: Move the sender to the spawn
     default: true
