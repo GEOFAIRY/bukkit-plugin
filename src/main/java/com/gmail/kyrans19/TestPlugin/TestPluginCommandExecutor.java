@@ -1,3 +1,10 @@
+/**
+ *  Program by: Kyran Stagg with partial help from Bryan Lim
+ *  Slob on me knob
+ *  mo bamba
+ *
+ */
+
 package com.gmail.kyrans19.TestPlugin;
 
 import org.bukkit.Bukkit;
