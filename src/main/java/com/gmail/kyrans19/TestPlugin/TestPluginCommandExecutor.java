@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Command Executor class, checks input command and does what it needs to.
  */
 public class TestPluginCommandExecutor implements CommandExecutor {
-    private ArrayList<ArrayList<Player>> teleportArray = new ArrayList<>();
+    private ArrayList<ArrayList<Object>> teleportArray = new ArrayList<>();
 
     void clearTpr() {
         teleportArray = new ArrayList<>();
@@ -102,7 +102,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                     return true;
                 }
                 if (healAmount > 0 && healAmount <= ((Player) sender).getMaxHealth()) {
-                    ((Player) sender).setHealth(healAmount);
+                    ((Player) sender).setHealth(((Player) sender).getHealth() + healAmount);
                     sender.sendMessage("§aHealed for " + healAmount.toString());
                     return true;
                 } else {
@@ -127,7 +127,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                     return true;
                 }
                 if (healAmount > 0 && healAmount <= target.getMaxHealth()) {
-                    target.setHealth(healAmount);
+                    target.setHealth(target.getHealth() + healAmount);
                     sender.sendMessage(String.format("§aHealed %s for %s", target.getDisplayName(), healAmount.toString()));
                     return true;
                 } else {
@@ -156,8 +156,8 @@ public class TestPluginCommandExecutor implements CommandExecutor {
      */
     private boolean teleportDecline(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
-            for (ArrayList<Player> i : teleportArray) {
-                if (i.get(1).getUniqueId() == ((Player) sender).getUniqueId()) {
+            for (ArrayList<Object> i : teleportArray) {
+                if (((Player) i.get(1)).getUniqueId() == ((Player) sender).getUniqueId()) {
                     sender.sendMessage("Teleport Declined");
                     teleportArray.remove(i);
                     return true;
@@ -179,12 +179,18 @@ public class TestPluginCommandExecutor implements CommandExecutor {
      */
     private boolean teleportAccept(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
-            for (ArrayList<Player> i : teleportArray) {
-                if (i.get(1).getUniqueId() == ((Player) sender).getUniqueId()) {
-                    Player target = sender.getServer().getPlayer(i.get(0).getUniqueId());
+            for (ArrayList<Object> i : teleportArray) {
+                if (((Player) i.get(1)).getUniqueId() == ((Player) sender).getUniqueId()) {
+                    Player target = sender.getServer().getPlayer(((Player) i.get(0)).getUniqueId());
                     // Make sure the player is online.
                     if (target == null) {
                         sender.sendMessage(args[0] + " is not currently online.");
+                        teleportArray.remove(i);
+                        return true;
+                    }
+                    long test = System.currentTimeMillis();
+                    if(test >= (((long) i.get(3)) + 15*1000)) { //multiply by 1000 to get milliseconds
+                        sender.sendMessage("Teleport request timed out");
                         teleportArray.remove(i);
                         return true;
                     }
@@ -225,15 +231,16 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                 }
 
 
-                for (ArrayList<Player> i : teleportArray) {
-                    if (i.get(1).getUniqueId() == target.getUniqueId()) {
+                for (ArrayList<Object> i : teleportArray) {
+                    if (((Player) i.get(1)).getUniqueId() == target.getUniqueId()) {
                         teleportArray.remove(i);
                     }
                 }
 
-                ArrayList<Player> temp = new ArrayList<>();
+                ArrayList<Object> temp = new ArrayList<>();
                 temp.add(targetSender);
                 temp.add(target);
+                temp.add(System.currentTimeMillis());
                 teleportArray.add(temp);
                 target.sendMessage(targetSender.getDisplayName() + " is requesting to teleport to you!\nType /tpaccept to accept or /tpdecline to decline.");
                 sender.sendMessage(String.format("Requested to teleport to %s", target.getDisplayName()));
