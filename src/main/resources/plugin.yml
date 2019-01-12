@@ -54,6 +54,11 @@ commands:
     usage: /testplugin
     permission: TestPlugin.version
     permission-message: You lack the required permissions for this command
+  feed:
+    description: Feeds player and feeds targeted player
+    usage: /feed
+    permission: TestPlugin.version
+    permission-message: You lack the required permissions for this command
 
 
 permission:
@@ -114,4 +119,7 @@ permission:
     default: true
   TestPlugin.version:
     description: Tells the user the plugin version
+    default: true
+  TestPlugin.feed:
+    description: Allows a user to feed self and feed targeted player
     default: true
