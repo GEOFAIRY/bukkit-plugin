@@ -66,6 +66,8 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             return home(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("testplugin")){
             return version(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("feed")){
+
         }
         return false;
     }
