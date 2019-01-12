@@ -68,7 +68,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
      */
     private boolean spawn(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
-            ((Player) sender).teleport(((Player) sender).getWorld().getSpawnLocation());
+            ((Player) sender).teleport(Bukkit.getServer().getWorlds().get(0).getSpawnLocation());
             sender.sendMessage("Moved to spawn");
             return true;
         } else {
