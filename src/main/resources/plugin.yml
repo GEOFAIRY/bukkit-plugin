@@ -1,7 +1,8 @@
 name: TestPlugin
 main: com.gmail.kyrans19.TestPlugin.TestPlugin
-version: 1.1-SNAPSHOT
+version: 1.2-SNAPSHOT
 author: GEOFAIRY
+
 commands:
   smite:
     description: Places lightning on a target player or when the sender is looking.
@@ -36,17 +37,17 @@ commands:
   spawn:
     description: Move the sender to the spawn
     usage: /spawn
-    permission: TestPlugin.spawn
+    permission: TestPlugin.teleport.spawn
     permission-message: You lack the required permissions for this command
   sethome:
     description: Sets the players home
     usage: /sethome
-    permission: TestPlugin.home.set
+    permission: TestPlugin.teleport.home.set
     permission-message: You lack the required permissions for this command
   home:
     description: Move the sender to their home
     usage: /home
-    permission: TestPlugin.home.go
+    permission: TestPlugin.teleport.home.go
     permission-message: You lack the required permissions for this command
   testplugin:
     description: Tells the user the plugin version
@@ -63,8 +64,6 @@ permission:
       TestPlugin.kill.*: true
       TestPlugin.teleport.*: true
       TestPlugin.heal: true
-      TestPlugin.spawn: true
-      TestPlugin.home.*: true
   TestPlugin.smite:
     description: Allows a user to smite
     default: op
@@ -85,6 +84,8 @@ permission:
       TestPlugin.teleport.request: true
       TestPlugin.teleport.accept: true
       TestPlugin.teleport.decline: true
+      TestPlugin.teleport.spawn: true
+      TestPlugin.teleport.home.*: true
   TestPlugin.teleport.request:
     description: Allows a user to request a teleport
     default: true
@@ -97,18 +98,18 @@ permission:
   TestPlugin.heal:
     description: Heals a target player by a given ammount or to max
     default: op
-  TestPlugin.spawn:
+  TestPlugin.teleport.spawn:
     description: Move the sender to the spawn
     default: true
-  TetPlugin.home.*:
+  TetPlugin.teleport.home.*:
     description: Gives access to all TestPlugin.home commands
     children:
-      TestPlugin.home.set: true
-      TestPlugin.home.go: true
-  TestPlugin.home.set:
+      TestPlugin.teleport.home.set: true
+      TestPlugin.teleport.home.go: true
+  TestPlugin.teleport.home.set:
     description: Allows a user to set their home
     default: true
-  TestPlugin.home.go:
+  TestPlugin.teleport.home.go:
     description: Allows a user to move to their home
     default: true
   TestPlugin.version:

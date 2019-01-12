@@ -2,25 +2,24 @@ package com.gmail.kyrans19.TestPlugin;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 
+/**
+ * class to handle reading and writing of json to an external file
+ */
 public class TestPluginReadWrite {
 
-    static ArrayList<TestPluginHomeSupport> homeSupports = new ArrayList<>();
-
-    public static void writeHomeToJson(Player player) throws Exception {
-        TestPluginHomeSupport newHome = new TestPluginHomeSupport(player.getUniqueId(), player.getLocation().getX(), player.getLocation().getX(), player.getLocation().getX());
-        homeSupports.add(newHome);
-
+    /**
+     * method to write the home list to a json file
+     * @throws Exception needed for writing to a file
+     */
+    public static void writeHomesToJson() throws Exception {
         Gson gson = new Gson();
-        String json = gson.toJson(homeSupports);
+        String json = gson.toJson(TestPluginCommandExecutor.homeSupports);
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("plugins\\TestPlugin\\locations.json"));
             writer.write(json);
@@ -33,16 +32,17 @@ public class TestPluginReadWrite {
         }
     }
 
-
-    public static Object readHomeFromJson(Player player) throws Exception {
+    /**
+     * method to read homes from a json and place in the home support array
+     * @throws Exception need for reading a file
+     */
+    public static void readHomeFromJson() throws Exception {
         FileReader reader = new FileReader("plugins\\TestPlugin\\locations.json");
         JSONParser jsonParser = new JSONParser();
         String output = jsonParser.parse(reader).toString();
 
         Type collectionType = new TypeToken<ArrayList<TestPluginHomeSupport>>(){}.getType();
         Gson gson = new Gson();
-        homeSupports = gson.fromJson(output, collectionType);
-
-        return true;
+        TestPluginCommandExecutor.homeSupports = gson.fromJson(output, collectionType);
     }
 }

@@ -8,17 +8,21 @@
 package com.gmail.kyrans19.TestPlugin;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import java.util.ArrayList;
-import java.util.UUID;
+import java.util.ConcurrentModificationException;
+
+import static org.bukkit.Bukkit.getLogger;
 
 /**
  * Command Executor class, checks input command and does what it needs to.
  */
 public class TestPluginCommandExecutor implements CommandExecutor {
+    public static ArrayList<TestPluginHomeSupport> homeSupports = new ArrayList<>();
     private ArrayList<ArrayList<Object>> teleportArray = new ArrayList<>();
     private TestPlugin testPlugin;
 
@@ -66,23 +70,87 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         return false;
     }
 
+    /**
+     * method to return the version number to the sender
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
     private boolean version(CommandSender sender, String[] args) {
         sender.sendMessage(String.format("§aTestPlugin current version: %s", testPlugin.getVersion()));
         return true;
     }
 
-    private boolean home(CommandSender sender, String[] args) {
-        return false;
+    /**
+     * method to handle moving a player to their home
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
+   private boolean home(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+            try {
+                TestPluginReadWrite.readHomeFromJson();
+            } catch (Exception e) {
+                try {
+                    TestPluginReadWrite.readHomeFromJson();
+                } catch (Exception e1) {
+                    getLogger().warning("Couldn't load home list from json file!");
+                    sender.sendMessage("An error has occurred, please try again later.");
+                }
+            }
+
+            for (TestPluginHomeSupport home: homeSupports) {
+                if (((Player) sender).getUniqueId() == home.getUuid()) {
+                    ((Player) sender).teleport(new Location(Bukkit.getServer().getWorld(home.getWorld()), home.getX(), home.getY(), home.getZ()));
+                    sender.sendMessage("Moved Home");
+                    return true;
+                }
+            }
+            sender.sendMessage("No home set");
+            return true;
+        } else {
+            sender.sendMessage("Only a player can go to a home");
+            return true;
+        }
     }
 
+    /**
+     * method to handle setting a player home
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
     private boolean sethome(CommandSender sender, String[] args) {
-        try {
-            TestPluginReadWrite.writeHomeToJson((Player) sender);
-            TestPluginReadWrite.readHomeFromJson((Player) sender);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (sender instanceof Player) {
+            try {
+                TestPluginHomeSupport newHome = new TestPluginHomeSupport(((Player) sender).getUniqueId(), ((Player) sender).getLocation().getX(),
+                        ((Player) sender).getLocation().getX(), ((Player) sender).getLocation().getX(), ((Player) sender).getLocation().getWorld());
 
+                try {
+                    for (TestPluginHomeSupport i : homeSupports) {
+                        if (((Player) sender).getUniqueId() == i.getUuid()) {
+                            homeSupports.remove(i);
+                        }
+                    }
+                } catch (ConcurrentModificationException e) {
+                    for (TestPluginHomeSupport i : homeSupports) {
+                        if (((Player) sender).getUniqueId() == i.getUuid()) {
+                            homeSupports.remove(i);
+                        }
+                    }
+                }
+                homeSupports.add(newHome);
+                TestPluginReadWrite.writeHomesToJson();
+                sender.sendMessage("New home set");
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            sender.sendMessage("Only a player can set a home");
+            return true;
+        }
         return false;
     }
 

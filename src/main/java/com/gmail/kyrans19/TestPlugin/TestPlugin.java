@@ -7,14 +7,10 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class TestPlugin extends JavaPlugin {
     TestPluginCommandExecutor executor;
-    String version = "1.1-SNAPSHOT";
+    String version = "1.2-SNAPSHOT";
 
     public String getVersion() {
         return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     @Override
@@ -23,6 +19,14 @@ public final class TestPlugin extends JavaPlugin {
          * Method executed on plugin load
          */
         executor = new TestPluginCommandExecutor(this);
+
+        try {
+            TestPluginReadWrite.readHomeFromJson();
+            getLogger().info("Loaded homes from json file");
+        } catch (Exception e) {
+            getLogger().warning("Couldn't load home list from json file!");
+        }
+
         this.getCommand("testplugin").setExecutor(executor);
         this.getCommand("smite").setExecutor(executor);
         this.getCommand("kill").setExecutor(executor);
