@@ -88,33 +88,34 @@ public class TestPluginCommandExecutor implements CommandExecutor {
      * @return boolean command success or failure
      */
    private boolean home(CommandSender sender, String[] args) {
-        if (sender instanceof Player) {
-            try {
-                TestPluginReadWrite.readHomeFromJson();
-            } catch (Exception e) {
-                try {
-                    TestPluginReadWrite.readHomeFromJson();
-                } catch (Exception e1) {
-                    getLogger().warning("Couldn't load home list from json file!");
-                    sender.sendMessage("An error has occurred, please try again later.");
-                }
-            }
+       if (sender instanceof Player) {
+           try {
+               TestPluginReadWrite.readHomeFromJson();
+           } catch (Exception e) {
+               try {
+                   TestPluginReadWrite.readHomeFromJson();
+               } catch (Exception e1) {
+                   getLogger().warning("Couldn't load home list from json file!");
+                   sender.sendMessage("An error has occurred, please try again later.");
+               }
+           }
 
-            for (TestPluginHomeSupport home: homeSupports) {
-                if (((Player) sender).getUniqueId() == home.getUuid()) {
-                if (((Player) sender).getUniqueId().equals(home.getUuid())) {
-                    ((Player) sender).teleport(new Location(Bukkit.getServer().getWorld(home.getWorld()), home.getX(), home.getY(), home.getZ()));
-                    sender.sendMessage("Moved Home");
-                    return true;
-                }
-            }
-            sender.sendMessage("No home set");
-            return true;
-        } else {
-            sender.sendMessage("Only a player can go to a home");
-            return true;
-        }
-    }
+           for (TestPluginHomeSupport home : homeSupports) {
+               if (((Player) sender).getUniqueId() == home.getUuid()) {
+                   if (((Player) sender).getUniqueId().equals(home.getUuid())) {
+                       ((Player) sender).teleport(new Location(Bukkit.getServer().getWorld(home.getWorld()), home.getX(), home.getY(), home.getZ()));
+                       sender.sendMessage("Moved Home");
+                       return true;
+                   }
+               }
+           }
+           sender.sendMessage("No home set");
+           return true;
+       } else{
+           sender.sendMessage("Only a player can go to a home");
+           return true;
+       }
+   }
 
     /**
      * method to handle setting a player home
