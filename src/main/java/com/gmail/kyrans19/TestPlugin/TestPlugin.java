@@ -46,6 +46,12 @@ public final class TestPlugin extends JavaPlugin {
          * Method executed on plugin unload
          */
         executor.clearTpr();
+        try {
+            TestPluginReadWrite.writeHomesToJson();
+            getLogger().info("Saved homes to json file");
+        } catch (Exception e) {
+            getLogger().warning("Couldn't save home list to json file!");
+        }
         getLogger().info("onDisable has been invoked!");
     }
 }

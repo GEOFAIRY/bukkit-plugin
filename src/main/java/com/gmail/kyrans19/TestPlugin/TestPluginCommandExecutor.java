@@ -102,6 +102,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
 
             for (TestPluginHomeSupport home: homeSupports) {
                 if (((Player) sender).getUniqueId() == home.getUuid()) {
+                if (((Player) sender).getUniqueId().equals(home.getUuid())) {
                     ((Player) sender).teleport(new Location(Bukkit.getServer().getWorld(home.getWorld()), home.getX(), home.getY(), home.getZ()));
                     sender.sendMessage("Moved Home");
                     return true;
@@ -125,17 +126,17 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         if (sender instanceof Player) {
             try {
                 TestPluginHomeSupport newHome = new TestPluginHomeSupport(((Player) sender).getUniqueId(), ((Player) sender).getLocation().getX(),
-                        ((Player) sender).getLocation().getX(), ((Player) sender).getLocation().getX(), ((Player) sender).getLocation().getWorld());
+                        ((Player) sender).getLocation().getY(), ((Player) sender).getLocation().getZ(), ((Player) sender).getLocation().getWorld());
 
                 try {
                     for (TestPluginHomeSupport i : homeSupports) {
-                        if (((Player) sender).getUniqueId() == i.getUuid()) {
+                        if (((Player) sender).getUniqueId().equals(i.getUuid())) {
                             homeSupports.remove(i);
                         }
                     }
                 } catch (ConcurrentModificationException e) {
                     for (TestPluginHomeSupport i : homeSupports) {
-                        if (((Player) sender).getUniqueId() == i.getUuid()) {
+                        if (((Player) sender).getUniqueId().equals(i.getUuid())) {
                             homeSupports.remove(i);
                         }
                     }
