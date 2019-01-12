@@ -1,8 +1,8 @@
-/**
- *  Program by: Kyran Stagg with partial help from Bryan Lim
- *  Slob on me knob
- *  mo bamba
- *
+/*
+   Program by: Kyran Stagg with partial help from Bryan Lim
+   Slob on me knob
+   mo bamba
+
  */
 
 package com.gmail.kyrans19.TestPlugin;
@@ -22,7 +22,7 @@ import static org.bukkit.Bukkit.getLogger;
  * Command Executor class, checks input command and does what it needs to.
  */
 public class TestPluginCommandExecutor implements CommandExecutor {
-    public static ArrayList<TestPluginHomeSupport> homeSupports = new ArrayList<>();
+    static ArrayList<TestPluginHomeSupport> homeSupports = new ArrayList<>();
     private ArrayList<ArrayList<Object>> teleportArray = new ArrayList<>();
     private TestPlugin testPlugin;
 
@@ -67,7 +67,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         } else if (cmd.getName().equalsIgnoreCase("testplugin")){
             return version(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("feed")){
-
+            return feed(sender, args);
         }
         return false;
     }
@@ -468,7 +468,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                     sender.sendMessage("Feed amount must be a number");
                     return true;
                 }
-                @SuppressWarnings("deprecation") Player target = sender.getServer().getPlayer(args[1]);
+                Player target = sender.getServer().getPlayer(args[1]);
                 // Make sure the player is online.
                 if (target == null) {
                     sender.sendMessage(args[1] + " is not currently online or cannot be found.");
