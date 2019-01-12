@@ -14,22 +14,26 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+
+import static org.bukkit.Bukkit.getLogger;
 
 /**
  * Command Executor class, checks input command and does what it needs to.
  */
 public class TestPluginCommandExecutor implements CommandExecutor {
+    public static ArrayList<TestPluginHomeSupport> homeSupports = new ArrayList<>();
     private ArrayList<ArrayList<Object>> teleportArray = new ArrayList<>();
+    private TestPlugin testPlugin;
+
+    TestPluginCommandExecutor(TestPlugin plugin) {
+        this.testPlugin = plugin;
+    }
 
     void clearTpr() {
         teleportArray = new ArrayList<>();
     }
 
-    /**
-     * command executor constructor
-     */
-    TestPluginCommandExecutor() {
-    }
 
     /**
      * method that is executed when a given command is executed by a command sender type
@@ -56,6 +60,98 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             return heal(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("spawn")){
             return spawn(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("sethome")){
+            return sethome(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("home")){
+            return home(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("testplugin")){
+            return version(sender, args);
+        }
+        return false;
+    }
+
+    /**
+     * method to return the version number to the sender
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
+    private boolean version(CommandSender sender, String[] args) {
+        sender.sendMessage(String.format("§aTestPlugin current version: %s", testPlugin.getVersion()));
+        return true;
+    }
+
+    /**
+     * method to handle moving a player to their home
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
+   private boolean home(CommandSender sender, String[] args) {
+       if (sender instanceof Player) {
+           try {
+               TestPluginReadWrite.readHomeFromJson();
+           } catch (Exception e) {
+               try {
+                   TestPluginReadWrite.readHomeFromJson();
+               } catch (Exception e1) {
+                   getLogger().warning("Couldn't load home list from json file!");
+                   sender.sendMessage("An error has occurred, please try again later.");
+               }
+           }
+
+           for (TestPluginHomeSupport home : homeSupports) {
+               if (((Player) sender).getUniqueId() == home.getUuid()) {
+                   if (((Player) sender).getUniqueId().equals(home.getUuid())) {
+                       ((Player) sender).teleport(new Location(Bukkit.getServer().getWorld(home.getWorld()), home.getX(), home.getY(), home.getZ()));
+                       sender.sendMessage("Moved Home");
+                       return true;
+                   }
+               }
+           }
+           sender.sendMessage("No home set");
+           return true;
+       } else{
+           sender.sendMessage("Only a player can go to a home");
+           return true;
+       }
+   }
+
+    /**
+     * method to handle setting a player home
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
+    private boolean sethome(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+            try {
+                TestPluginHomeSupport newHome = new TestPluginHomeSupport(((Player) sender).getUniqueId(), ((Player) sender).getLocation().getX(),
+                        ((Player) sender).getLocation().getY(), ((Player) sender).getLocation().getZ(), ((Player) sender).getLocation().getWorld());
+
+                try {
+                    for (TestPluginHomeSupport i : homeSupports) {
+                        if (((Player) sender).getUniqueId().equals(i.getUuid())) {
+                            homeSupports.remove(i);
+                        }
+                    }
+                } catch (ConcurrentModificationException e) {
+                    for (TestPluginHomeSupport i : homeSupports) {
+                        if (((Player) sender).getUniqueId().equals(i.getUuid())) {
+                            homeSupports.remove(i);
+                        }
+                    }
+                }
+                homeSupports.add(newHome);
+                TestPluginReadWrite.writeHomesToJson();
+                sender.sendMessage("New home set");
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            sender.sendMessage("Only a player can set a home");
+            return true;
         }
         return false;
     }
@@ -159,6 +255,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             for (ArrayList<Object> i : teleportArray) {
                 if (((Player) i.get(1)).getUniqueId() == ((Player) sender).getUniqueId()) {
                     sender.sendMessage("Teleport Declined");
+                    ((Player) i.get(0)).sendMessage(String.format("Teleport request to %s was declined", ((Player) sender).getDisplayName()));
                     teleportArray.remove(i);
                     return true;
                 }
@@ -189,13 +286,14 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                         return true;
                     }
                     long test = System.currentTimeMillis();
-                    if(test >= (((long) i.get(3)) + 15*1000)) { //multiply by 1000 to get milliseconds
+                    if(test >= (((long) i.get(2)) + 60*1000)) { //multiply by 1000 to get milliseconds
                         sender.sendMessage("Teleport request timed out");
                         teleportArray.remove(i);
                         return true;
                     }
                     target.teleport(((Player) sender).getLocation());
                     sender.sendMessage("Teleport Accepted");
+                    target.sendMessage("Teleport Accepted");
                     teleportArray.remove(i);
                     return true;
                 }
