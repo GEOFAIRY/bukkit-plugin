@@ -426,6 +426,74 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         return false;
     }
 
+    /** method to feed player self AND feed targeted player
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
+    private boolean feed(CommandSender sender, String[] args) {
+
+        int feedAmount;
+
+        if (sender instanceof Player) {
+
+            if (args.length == 0) {         // Feed self to full
+                ((Player) sender).setFoodLevel(((Player) sender).getFoodLevel());
+                sender.sendMessage("§aYou are full");
+                return true;
+
+            } else if (args.length == 1) {      //Heal self by given amount
+                try {
+                    feedAmount = Integer.parseInt(args[0]);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage("Feed amount must be a number");
+                    return true;
+                }
+                if (feedAmount > 0 && feedAmount <= ((Player) sender).getFoodLevel()) {
+                    ((Player) sender).setFoodLevel(((Player) sender).getFoodLevel() + feedAmount);
+                    sender.sendMessage(String.format("§aFed for %d", feedAmount));
+                    return true;
+                } else {
+                    sender.sendMessage("Can only feed an amount between 0 and 10");
+                    return true;
+                }
+
+
+            } else if (args.length == 2) {      //Heal a target by given amount
+                try {
+                    feedAmount = Integer.parseInt(args[0]);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage("Feed amount must be a number");
+                    return true;
+                }
+                @SuppressWarnings("deprecation") Player target = sender.getServer().getPlayer(args[1]);
+                // Make sure the player is online.
+                if (target == null) {
+                    sender.sendMessage(args[1] + " is not currently online or cannot be found.");
+                    return true;
+                }
+                if (feedAmount > 0 && feedAmount <= 10) {
+                    target.setFoodLevel(target.getFoodLevel() + feedAmount);
+                    sender.sendMessage(String.format("§aFed %s for %d", target.getDisplayName(), feedAmount));
+                    return true;
+                } else {
+                    sender.sendMessage("Can only feed an amount between 0 and 10");
+                    return true;
+                }
+
+
+            } else {
+                sender.sendMessage("Too many arguments");
+                return false;
+            }
+        } else {
+            sender.sendMessage("Must be a player to feed");
+            return false;
+        }
+    }
+
+
+
     /**
      * method to check if a given player is currently online
      * @param targetPlayer String The name of the player to check
