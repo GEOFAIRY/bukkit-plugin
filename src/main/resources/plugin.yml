@@ -1,6 +1,6 @@
 name: TestPlugin
 main: com.gmail.kyrans19.TestPlugin.TestPlugin
-version: 1.0-SNAPSHOT
+version: 1.1-SNAPSHOT
 author: GEOFAIRY
 commands:
   smite:
@@ -38,6 +38,22 @@ commands:
     usage: /spawn
     permission: TestPlugin.spawn
     permission-message: You lack the required permissions for this command
+  sethome:
+    description: Sets the players home
+    usage: /sethome
+    permission: TestPlugin.home.set
+    permission-message: You lack the required permissions for this command
+  home:
+    description: Move the sender to their home
+    usage: /home
+    permission: TestPlugin.home.go
+    permission-message: You lack the required permissions for this command
+  testplugin:
+    description: Tells the user the plugin version
+    usage: /testplugin
+    permission: TestPlugin.version
+    permission-message: You lack the required permissions for this command
+
 
 permission:
   TestPlugin.*:
@@ -48,6 +64,7 @@ permission:
       TestPlugin.teleport.*: true
       TestPlugin.heal: true
       TestPlugin.spawn: true
+      TestPlugin.home.*: true
   TestPlugin.smite:
     description: Allows a user to smite
     default: op
@@ -82,4 +99,18 @@ permission:
     default: op
   TestPlugin.spawn:
     description: Move the sender to the spawn
+    default: true
+  TetPlugin.home.*:
+    description: Gives access to all TestPlugin.home commands
+    children:
+      TestPlugin.home.set: true
+      TestPlugin.home.go: true
+  TestPlugin.home.set:
+    description: Allows a user to set their home
+    default: true
+  TestPlugin.home.go:
+    description: Allows a user to move to their home
+    default: true
+  TestPlugin.version:
+    description: Tells the user the plugin version
     default: true

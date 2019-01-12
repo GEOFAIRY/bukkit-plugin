@@ -8,28 +8,28 @@
 package com.gmail.kyrans19.TestPlugin;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Command Executor class, checks input command and does what it needs to.
  */
 public class TestPluginCommandExecutor implements CommandExecutor {
     private ArrayList<ArrayList<Object>> teleportArray = new ArrayList<>();
+    private TestPlugin testPlugin;
+
+    TestPluginCommandExecutor(TestPlugin plugin) {
+        this.testPlugin = plugin;
+    }
 
     void clearTpr() {
         teleportArray = new ArrayList<>();
     }
 
-    /**
-     * command executor constructor
-     */
-    TestPluginCommandExecutor() {
-    }
 
     /**
      * method that is executed when a given command is executed by a command sender type
@@ -56,7 +56,33 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             return heal(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("spawn")){
             return spawn(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("sethome")){
+            return sethome(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("home")){
+            return home(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("testplugin")){
+            return version(sender, args);
         }
+        return false;
+    }
+
+    private boolean version(CommandSender sender, String[] args) {
+        sender.sendMessage(String.format("§aTestPlugin current version: %s", testPlugin.getVersion()));
+        return true;
+    }
+
+    private boolean home(CommandSender sender, String[] args) {
+        return false;
+    }
+
+    private boolean sethome(CommandSender sender, String[] args) {
+        try {
+            TestPluginReadWrite.writeHomeToJson((Player) sender);
+            TestPluginReadWrite.readHomeFromJson((Player) sender);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return false;
     }
 
@@ -159,6 +185,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             for (ArrayList<Object> i : teleportArray) {
                 if (((Player) i.get(1)).getUniqueId() == ((Player) sender).getUniqueId()) {
                     sender.sendMessage("Teleport Declined");
+                    ((Player) i.get(0)).sendMessage(String.format("Teleport request to %s was declined", ((Player) sender).getDisplayName()));
                     teleportArray.remove(i);
                     return true;
                 }
@@ -189,13 +216,14 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                         return true;
                     }
                     long test = System.currentTimeMillis();
-                    if(test >= (((long) i.get(3)) + 15*1000)) { //multiply by 1000 to get milliseconds
+                    if(test >= (((long) i.get(2)) + 60*1000)) { //multiply by 1000 to get milliseconds
                         sender.sendMessage("Teleport request timed out");
                         teleportArray.remove(i);
                         return true;
                     }
                     target.teleport(((Player) sender).getLocation());
                     sender.sendMessage("Teleport Accepted");
+                    target.sendMessage("Teleport Accepted");
                     teleportArray.remove(i);
                     return true;
                 }

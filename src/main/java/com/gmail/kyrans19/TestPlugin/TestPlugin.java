@@ -7,13 +7,23 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class TestPlugin extends JavaPlugin {
     TestPluginCommandExecutor executor;
+    String version = "1.1-SNAPSHOT";
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     @Override
     public void onEnable() {
         /**
          * Method executed on plugin load
          */
-        executor = new TestPluginCommandExecutor();
+        executor = new TestPluginCommandExecutor(this);
+        this.getCommand("testplugin").setExecutor(executor);
         this.getCommand("smite").setExecutor(executor);
         this.getCommand("kill").setExecutor(executor);
         this.getCommand("tpr").setExecutor(executor);
@@ -21,7 +31,9 @@ public final class TestPlugin extends JavaPlugin {
         this.getCommand("tpdecline").setExecutor(executor);
         this.getCommand("heal").setExecutor(executor);
         this.getCommand("spawn").setExecutor(executor);
-        getLogger().info("Test Plugin version 1.0 has started!");
+        this.getCommand("sethome").setExecutor(executor);
+        this.getCommand("home").setExecutor(executor);
+        getLogger().info("Test Plugin version " + version +  " has started!");
     }
 
     @Override
