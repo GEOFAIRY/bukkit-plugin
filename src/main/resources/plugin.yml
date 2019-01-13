@@ -56,12 +56,12 @@ commands:
     permission-message: You lack the required permissions for this command
   feed:
     description: Feeds player and feeds targeted player
-    usage: /feed
+    usage: /feed [ammount] [player]
     permission: TestPlugin.feed
     permission-message: You lack the required permissions for this command
   fly:
     description: Enables/disables flight for the player
-    usage: /fly
+    usage: /fly [player]
     permission: TestPlugin.fly
     permission-message: You lack the required permissions for this command
 

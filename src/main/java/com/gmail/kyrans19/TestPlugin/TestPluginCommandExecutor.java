@@ -517,18 +517,12 @@ public class TestPluginCommandExecutor implements CommandExecutor {
 
         if (sender != null) {
             if (args.length == 0) {
-                if (!player.getAllowFlight()) { //returns false if playerself is not flying
-                    player.setAllowFlight(true);
-                    player.setFlying(true);
-                    sender.sendMessage("Now flying");
-                    return true;
-                } else if (player.getAllowFlight()) { //returns true if playerself is flying
-                    player.setAllowFlight(false);
-                    player.setFlying(false);
-                    sender.sendMessage("Flying off");
-                    return true;
+                if (sender instanceof Player) {
+                    if (toggleFlying(sender, player)) return true;
                 }
-
+            } else if (args.length == 1) {
+                Player target = Bukkit.getPlayer(args[0]);
+                if (toggleFlying(sender, target)) return true;
             } else {
                 sender.sendMessage("Too many arguments");
                 return false;
@@ -537,6 +531,26 @@ public class TestPluginCommandExecutor implements CommandExecutor {
     return false;
     }
 
+    /**
+     * generic method to toggle flying on a target player
+     * @param sender CommandSender is the player who sent the command
+     * @param target Player the player to toggle flying
+     * @return if the command was successful
+     */
+    private boolean toggleFlying(CommandSender sender, Player target) {
+        if (!target.getAllowFlight()) { //returns false if target is not flying
+            target.setAllowFlight(true);
+            target.setFlying(true);
+            sender.sendMessage("Now flying");
+            return true;
+        } else if (target.getAllowFlight()) { //returns true if target is flying
+            target.setAllowFlight(false);
+            target.setFlying(false);
+            sender.sendMessage("Flying off");
+            return true;
+        }
+        return false;
+    }
 
 
 }
