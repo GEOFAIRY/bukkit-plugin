@@ -57,12 +57,12 @@ commands:
   feed:
     description: Feeds player and feeds targeted player
     usage: /feed
-    permission: TestPlugin.version
+    permission: TestPlugin.feed
     permission-message: You lack the required permissions for this command
   fly:
     description: Enables/disables flight for the player
     usage: /fly
-    permission: TestPlugin.version
+    permission: TestPlugin.fly
     permission-message: You lack the required permissions for this command
 
 
