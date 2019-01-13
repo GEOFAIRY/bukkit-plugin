@@ -105,12 +105,10 @@ public class TestPluginCommandExecutor implements CommandExecutor {
            }
 
            for (TestPluginHomeSupport home : homeSupports) {
-               if (((Player) sender).getUniqueId() == home.getUuid()) {
-                   if (((Player) sender).getUniqueId().equals(home.getUuid())) {
-                       ((Player) sender).teleport(new Location(Bukkit.getServer().getWorld(home.getWorld()), home.getX(), home.getY(), home.getZ()));
-                       sender.sendMessage("Moved Home");
-                       return true;
-                   }
+               if (((Player) sender).getUniqueId().equals(home.getUuid())) {
+                   ((Player) sender).teleport(new Location(Bukkit.getServer().getWorld(home.getWorld()), home.getX(), home.getY(), home.getZ()));
+                   sender.sendMessage("Moved Home");
+                   return true;
                }
            }
            sender.sendMessage("No home set");
