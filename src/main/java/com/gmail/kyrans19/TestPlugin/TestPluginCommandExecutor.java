@@ -70,8 +70,36 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             return feed(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("fly")) {
             return fly(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("tpall")) {
+            return tpall(sender, args);
         }
         return false;
+    }
+
+    /**
+     * method to teleport all players to the sender
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
+    private boolean tpall(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+            if (args.length == 0) {
+                for (Player i: Bukkit.getServer().getOnlinePlayers()) {
+                    if (!((Player) sender).getUniqueId().equals(i.getUniqueId())) {
+                        i.teleport(((Player) sender).getLocation());
+                    }
+                }
+                sender.sendMessage("Teleported all players to you!");
+                return true;
+            } else {
+                sender.sendMessage("Too many arguments");
+                return false;
+            }
+        } else {
+            sender.sendMessage("Must be an online player to use this command");
+            return true;
+        }
     }
 
     /**

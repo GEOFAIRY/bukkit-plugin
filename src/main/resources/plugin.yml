@@ -64,6 +64,11 @@ commands:
     usage: /fly [player]
     permission: TestPlugin.fly
     permission-message: You lack the required permissions for this command
+  tpall:
+    description: Teleports all players in the server to the sender
+    usage: /tpall
+    permission: TestPlugin.teleport.all
+    permission-message: You lack the required permissions for this command
 
 
 permission:
@@ -96,6 +101,7 @@ permission:
       TestPlugin.teleport.decline: true
       TestPlugin.teleport.spawn: true
       TestPlugin.teleport.home.*: true
+      TestPlugin.teleport.all: true
   TestPlugin.teleport.request:
     description: Allows a user to request a teleport
     default: true
@@ -127,7 +133,10 @@ permission:
     default: true
   TestPlugin.feed:
     description: Allows a user to feed self and feed targeted player
-    default: true
+    default: op
   TestPlugin.fly:
     description: Allows a user to enable/disable flight for self
-    default: true
+    default: op
+  TestPlugin.teleport.all:
+    description: Teleports all players in the server to the sender
+    default: op
