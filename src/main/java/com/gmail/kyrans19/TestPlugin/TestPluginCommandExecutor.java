@@ -522,9 +522,13 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             if (args.length == 0) {
                 if (!player.getAllowFlight()) { //returns false if playerself is not flying
                     player.setAllowFlight(true);
+                    player.setFlying(true);
+                    sender.sendMessage("Now flying");
                     return true;
                 } else if (player.getAllowFlight()) { //returns true if playerself is flying
                     player.setAllowFlight(false);
+                    player.setFlying(false);
+                    sender.sendMessage("Flying off");
                     return true;
                 }
 
