@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
+import static org.bukkit.Bukkit.getAllowFlight;
 import static org.bukkit.Bukkit.getLogger;
 
 /**
@@ -68,6 +69,8 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             return version(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("feed")){
             return feed(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("fly")) {
+            return fly(sender, args);
         }
         return false;
     }
@@ -495,7 +498,6 @@ public class TestPluginCommandExecutor implements CommandExecutor {
     }
 
 
-
     /**
      * method to check if a given player is currently online
      * @param targetPlayer String The name of the player to check
@@ -505,6 +507,35 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         Player player = Bukkit.getServer().getPlayer(targetPlayer);
         return player != null;
     }
+
+    /**
+     * method to enable flight on player
+     * @param sender CommandSender is the player who sent the command
+     * @param args the number of arguments that are parsed
+     * @return
+     */
+    private boolean fly(CommandSender sender, String[] args) {
+
+        Player player = (Player) sender;
+
+        if (sender != null) {
+            if (args.length == 0) {
+                if (!player.getAllowFlight()) { //returns false if playerself is not flying
+                    player.setAllowFlight(true);
+                    return true;
+                } else if (player.getAllowFlight()) { //returns true if playerself is flying
+                    player.setAllowFlight(false);
+                    return true;
+                }
+
+            } else if (args.length > 0) {
+                sender.sendMessage("Too many arguments");
+                return false;
+            }
+        }
+    return false;
+    }
+
 
 
 }

@@ -38,6 +38,7 @@ public final class TestPlugin extends JavaPlugin {
         this.getCommand("sethome").setExecutor(executor);
         this.getCommand("home").setExecutor(executor);
         this.getCommand("feed").setExecutor(executor);
+        this.getCommand("fly").setExecutor(executor);
         getLogger().info("Test Plugin version " + version +  " has started!");
     }
 
