@@ -1,28 +1,28 @@
-/**
- *  Program by: Kyran Stagg with partial help from Bryan Lim
- *  Slob on me knob
- *  mo bamba
- *
+/*
+   Program by: Kyran Stagg with partial help from Bryan Lim
+   Slob on me knob
+   mo bamba
+
  */
 
 package com.gmail.kyrans19.TestPlugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-
 import static org.bukkit.Bukkit.getLogger;
 
 /**
  * Command Executor class, checks input command and does what it needs to.
  */
 public class TestPluginCommandExecutor implements CommandExecutor {
-    public static ArrayList<TestPluginHomeSupport> homeSupports = new ArrayList<>();
+    static ArrayList<TestPluginHomeSupport> homeSupports = new ArrayList<>();
     private ArrayList<ArrayList<Object>> teleportArray = new ArrayList<>();
     private TestPlugin testPlugin;
 
@@ -66,6 +66,10 @@ public class TestPluginCommandExecutor implements CommandExecutor {
             return home(sender, args);
         } else if (cmd.getName().equalsIgnoreCase("testplugin")){
             return version(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("feed")){
+            return feed(sender, args);
+        } else if (cmd.getName().equalsIgnoreCase("fly")) {
+            return fly(sender, args);
         }
         return false;
     }
@@ -184,7 +188,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         if (sender instanceof Player) {
 
             if (args.length == 0) {         // Heal Self to full
-                ((Player) sender).setHealth(((Player) sender).getMaxHealth());
+                ((Player) sender).setHealth(((Player) sender).getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
                 sender.sendMessage("§aHealed");
                 return true;
 
@@ -197,12 +201,12 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                     sender.sendMessage("Heal amount must be a number");
                     return true;
                 }
-                if (healAmount > 0 && healAmount <= ((Player) sender).getMaxHealth()) {
+                if (healAmount > 0 && healAmount <= ((Player) sender).getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue()) {
                     ((Player) sender).setHealth(((Player) sender).getHealth() + healAmount);
                     sender.sendMessage("§aHealed for " + healAmount.toString());
                     return true;
                 } else {
-                    Double maxHealth = ((Player) sender).getMaxHealth();
+                    Double maxHealth = ((Player) sender).getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
                     sender.sendMessage(String.format("Can only heal an amount between 0 and %.2f", maxHealth));
                     return true;
                 }
@@ -222,12 +226,12 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                     sender.sendMessage(args[1] + " is not currently online or cannot be found.");
                     return true;
                 }
-                if (healAmount > 0 && healAmount <= target.getMaxHealth()) {
+                if (healAmount > 0 && healAmount <= target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue()) {
                     target.setHealth(target.getHealth() + healAmount);
                     sender.sendMessage(String.format("§aHealed %s for %s", target.getDisplayName(), healAmount.toString()));
                     return true;
                 } else {
-                    Double maxHealth = target.getMaxHealth();
+                    Double maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
                     sender.sendMessage(String.format("Can only heal an amount between 0 and %.2f", maxHealth));
                     return true;
                 }
@@ -426,6 +430,73 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         return false;
     }
 
+    /** method to feed player self AND feed targeted player
+     * @param sender CommandSender the player who executed the command
+     * @param args   String[] the command arguments
+     * @return boolean command success or failure
+     */
+    private boolean feed(CommandSender sender, String[] args) {
+
+        int feedAmount;
+
+        if (sender instanceof Player) {
+
+            if (args.length == 0) {         // Feed self to full
+                ((Player) sender).setFoodLevel(20);
+                sender.sendMessage("§aFed");
+                return true;
+
+            } else if (args.length == 1) {      //Heal self by given amount
+                try {
+                    feedAmount = Integer.parseInt(args[0]);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage("Feed amount must be a number");
+                    return true;
+                }
+                if (feedAmount > 0 && feedAmount <= ((Player) sender).getFoodLevel()) {
+                    ((Player) sender).setFoodLevel(((Player) sender).getFoodLevel() + feedAmount);
+                    sender.sendMessage(String.format("§aFed for %d", feedAmount));
+                    return true;
+                } else {
+                    sender.sendMessage("Can only feed an amount between 0 and 10");
+                    return true;
+                }
+
+
+            } else if (args.length == 2) {      //Heal a target by given amount
+                try {
+                    feedAmount = Integer.parseInt(args[0]);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage("Feed amount must be a number");
+                    return true;
+                }
+                Player target = sender.getServer().getPlayer(args[1]);
+                // Make sure the player is online.
+                if (target == null) {
+                    sender.sendMessage(args[1] + " is not currently online or cannot be found.");
+                    return true;
+                }
+                if (feedAmount > 0 && feedAmount <= 10) {
+                    target.setFoodLevel(target.getFoodLevel() + feedAmount);
+                    sender.sendMessage(String.format("§aFed %s for %d", target.getDisplayName(), feedAmount));
+                    return true;
+                } else {
+                    sender.sendMessage("Can only feed an amount between 0 and 10");
+                    return true;
+                }
+
+
+            } else {
+                sender.sendMessage("Too many arguments");
+                return false;
+            }
+        } else {
+            sender.sendMessage("Must be a player to feed");
+            return false;
+        }
+    }
+
+
     /**
      * method to check if a given player is currently online
      * @param targetPlayer String The name of the player to check
@@ -435,6 +506,39 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         Player player = Bukkit.getServer().getPlayer(targetPlayer);
         return player != null;
     }
+
+    /**
+     * method to enable flight on player
+     * @param sender CommandSender is the player who sent the command
+     * @param args the number of arguments that are parsed
+     * @return boolean command success or failure
+     */
+    private boolean fly(CommandSender sender, String[] args) {
+
+        Player player = (Player) sender;
+
+        if (sender != null) {
+            if (args.length == 0) {
+                if (!player.getAllowFlight()) { //returns false if playerself is not flying
+                    player.setAllowFlight(true);
+                    player.setFlying(true);
+                    sender.sendMessage("Now flying");
+                    return true;
+                } else if (player.getAllowFlight()) { //returns true if playerself is flying
+                    player.setAllowFlight(false);
+                    player.setFlying(false);
+                    sender.sendMessage("Flying off");
+                    return true;
+                }
+
+            } else {
+                sender.sendMessage("Too many arguments");
+                return false;
+            }
+        }
+    return false;
+    }
+
 
 
 }
