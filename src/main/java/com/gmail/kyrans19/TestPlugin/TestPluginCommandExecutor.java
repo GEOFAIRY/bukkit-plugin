@@ -9,14 +9,13 @@ package com.gmail.kyrans19.TestPlugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-
-import static org.bukkit.Bukkit.getAllowFlight;
 import static org.bukkit.Bukkit.getLogger;
 
 /**
@@ -189,7 +188,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         if (sender instanceof Player) {
 
             if (args.length == 0) {         // Heal Self to full
-                ((Player) sender).setHealth(((Player) sender).getMaxHealth());
+                ((Player) sender).setHealth(((Player) sender).getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
                 sender.sendMessage("§aHealed");
                 return true;
 
@@ -202,12 +201,12 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                     sender.sendMessage("Heal amount must be a number");
                     return true;
                 }
-                if (healAmount > 0 && healAmount <= ((Player) sender).getMaxHealth()) {
+                if (healAmount > 0 && healAmount <= ((Player) sender).getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue()) {
                     ((Player) sender).setHealth(((Player) sender).getHealth() + healAmount);
                     sender.sendMessage("§aHealed for " + healAmount.toString());
                     return true;
                 } else {
-                    Double maxHealth = ((Player) sender).getMaxHealth();
+                    Double maxHealth = ((Player) sender).getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
                     sender.sendMessage(String.format("Can only heal an amount between 0 and %.2f", maxHealth));
                     return true;
                 }
@@ -227,12 +226,12 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                     sender.sendMessage(args[1] + " is not currently online or cannot be found.");
                     return true;
                 }
-                if (healAmount > 0 && healAmount <= target.getMaxHealth()) {
+                if (healAmount > 0 && healAmount <= target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue()) {
                     target.setHealth(target.getHealth() + healAmount);
                     sender.sendMessage(String.format("§aHealed %s for %s", target.getDisplayName(), healAmount.toString()));
                     return true;
                 } else {
-                    Double maxHealth = target.getMaxHealth();
+                    Double maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
                     sender.sendMessage(String.format("Can only heal an amount between 0 and %.2f", maxHealth));
                     return true;
                 }
@@ -443,8 +442,8 @@ public class TestPluginCommandExecutor implements CommandExecutor {
         if (sender instanceof Player) {
 
             if (args.length == 0) {         // Feed self to full
-                ((Player) sender).setFoodLevel(((Player) sender).getFoodLevel());
-                sender.sendMessage("§aYou are full");
+                ((Player) sender).setFoodLevel(20);
+                sender.sendMessage("§aFed");
                 return true;
 
             } else if (args.length == 1) {      //Heal self by given amount
@@ -512,7 +511,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
      * method to enable flight on player
      * @param sender CommandSender is the player who sent the command
      * @param args the number of arguments that are parsed
-     * @return
+     * @return boolean command success or failure
      */
     private boolean fly(CommandSender sender, String[] args) {
 
@@ -532,7 +531,7 @@ public class TestPluginCommandExecutor implements CommandExecutor {
                     return true;
                 }
 
-            } else if (args.length > 0) {
+            } else {
                 sender.sendMessage("Too many arguments");
                 return false;
             }
